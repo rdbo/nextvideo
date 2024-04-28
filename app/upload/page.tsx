@@ -17,6 +17,7 @@ export default function UploadPage() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDropAccepted,
     accept: { "video/*": [".mp4", ".avi", ".mpeg", ".mkv"] },
+    disabled: isUploading,
   });
 
   return (
@@ -39,8 +40,10 @@ export default function UploadPage() {
         </div>
         {isUploading && (
           <div className="my-2 relative h-8 flex items-center justify-center">
-            <Progress value={uploadProgress} className="h-6"/>
-            <p className="absolute top-0 h-8 text-sm flex items-center font-bold text-blue-400">{uploadProgress}%</p>
+            <Progress value={uploadProgress} className="h-6" />
+            <p className="absolute top-0 h-8 text-sm flex items-center font-bold text-blue-400">
+              {uploadProgress}%
+            </p>
           </div>
         )}
       </div>
