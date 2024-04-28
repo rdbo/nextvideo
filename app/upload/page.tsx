@@ -16,7 +16,7 @@ import {
 import { useDropzone } from "react-dropzone";
 
 interface VideoInfo {
-  name: string;
+  title: string;
   description: string;
 }
 
@@ -31,14 +31,14 @@ function VideoInformation() {
   const { setVideoInfo } = useContext(
     VideoInfoContext,
   ) as VideoInfoContextProps;
-  const formVideoName = useRef<HTMLInputElement>(null);
+  const formVideoTitle = useRef<HTMLInputElement>(null);
   const formVideoDesc = useRef<HTMLTextAreaElement>(null);
 
   const handleFormSubmit = (event: any) => {
     event.preventDefault();
-    const videoName = (formVideoName.current as HTMLInputElement).value;
+    const videoTitle = (formVideoTitle.current as HTMLInputElement).value;
     const videoDesc = (formVideoDesc.current as HTMLTextAreaElement).value;
-    setVideoInfo({ name: videoName, description: videoDesc });
+    setVideoInfo({ title: videoTitle, description: videoDesc });
   };
 
   return (
@@ -52,7 +52,7 @@ function VideoInformation() {
           <Input
             id="name"
             name="name"
-            ref={formVideoName}
+            ref={formVideoTitle}
             className="mb-4"
             placeholder="How I made an Operating System"
             required
@@ -79,6 +79,7 @@ function VideoInformation() {
 function UploadVideoFile() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps).videoInfo as VideoInfo;
 
   const onDropAccepted = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
@@ -95,6 +96,7 @@ function UploadVideoFile() {
     <>
       <h1 className="text-2xl font-bold text-center my-4">Upload a Video</h1>
       <div className="px-8">
+        <p className="text-center text-xl"><span className="font-bold">Title:</span> {videoInfo.title}</p>
         <div
           {...getRootProps()}
           className="border-4 border-slate-800 border-dashed h-96 w-full rounded-lg flex justify-center items-center text-2xl text-center text-slate-400"
@@ -123,7 +125,7 @@ function UploadVideoFile() {
 }
 
 export default function UploadPage() {
-  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
+  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>({title: "Hello", description: "world"});
   return (
     <VideoInfoContext.Provider value={{ videoInfo, setVideoInfo }}>
       {videoInfo ? <UploadVideoFile /> : <VideoInformation />}
