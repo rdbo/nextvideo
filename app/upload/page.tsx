@@ -80,30 +80,43 @@ function VideoInformation() {
 function UploadVideoFile() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps).videoInfo as VideoInfo;
+  const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps)
+    .videoInfo as VideoInfo;
 
-  const onDropAccepted = useCallback((acceptedFiles: File[]) => {
-    setIsUploading(true);
-    let formData = new FormData();
-    formData.append("title", videoInfo.title);
-    formData.append("description", videoInfo.description);
-    formData.append("video", acceptedFiles[0]);
-    const uploadVideo = async () => {
-      const resp = await axios.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        },
+  const onDropAccepted = useCallback(
+    (acceptedFiles: File[]) => {
+      setIsUploading(true);
+      let formData = new FormData();
+      formData.append("title", videoInfo.title);
+      formData.append("description", videoInfo.description);
+      formData.append("video", acceptedFiles[0]);
+      const uploadVideo = async () => {
+        let resp;
+        try {
+          resp = await axios.post("/api/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
 
-        onUploadProgress: (event) => {
-          const progress = (event.loaded / (event.total as number)) * 100;
-          setUploadProgress(progress);
+            onUploadProgress: (event) => {
+              const progress = (event.loaded / (event.total as number)) * 100;
+              setUploadProgress(progress);
+            },
+          });
+        } catch (error) {
+          setIsUploading(false);
+          // TODO: Handle error!
+          alert("Failed to upload video, try again");
+          return;
         }
-      });
-      setIsUploading(false);
-      console.log(resp);
-    };
-    uploadVideo();
-  }, [videoInfo]);
+
+        setIsUploading(false);
+        alert("Video uploaded succesfully");
+      };
+      uploadVideo();
+    },
+    [videoInfo],
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDropAccepted,
