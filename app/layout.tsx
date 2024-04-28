@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-slate-950`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -26,7 +26,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen">
-            <header>
+            <header className="sticky top-0 bg-slate-950 border-b border-slate-800">
               <NavBar />
             </header>
             <main>{children}</main>
