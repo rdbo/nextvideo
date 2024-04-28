@@ -6,7 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload } from "lucide-react";
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 
 interface VideoInfo {
@@ -22,24 +28,49 @@ interface VideoInfoContextProps {
 const VideoInfoContext = createContext<VideoInfoContextProps | null>(null);
 
 function VideoInformation() {
-  const { videoInfo, setVideoInfo } = useContext(VideoInfoContext) as VideoInfoContextProps;
-  const formVideoName = useRef(null);
+  const { setVideoInfo } = useContext(
+    VideoInfoContext,
+  ) as VideoInfoContextProps;
+  const formVideoName = useRef<HTMLInputElement>(null);
+  const formVideoDesc = useRef<HTMLTextAreaElement>(null);
 
   const handleFormSubmit = (event: any) => {
     event.preventDefault();
-  }
+    const videoName = (formVideoName.current as HTMLInputElement).value;
+    const videoDesc = (formVideoDesc.current as HTMLTextAreaElement).value;
+    setVideoInfo({ name: videoName, description: videoDesc });
+  };
 
   return (
     <>
       <h1 className="text-2xl font-bold text-center my-4">Video Information</h1>
       <div className="flex flex-col items-center">
-      <form onSubmit={handleFormSubmit} className="w-96">
-        <Label htmlFor="name" className="font-bold text-xl">Title</Label>
-        <Input id="name" name="name" ref={formVideoName} className="mb-4" />
-        <Label htmlFor="description" className="font-bold text-xl">Description</Label>
-        <Textarea id="description" name="description" rows={10} className="resize-none" />
-        <Button className="w-full mt-4">Continue</Button>
-      </form>
+        <form onSubmit={handleFormSubmit} className="w-96">
+          <Label htmlFor="name" className="font-bold text-xl">
+            Title
+          </Label>
+          <Input
+            id="name"
+            name="name"
+            ref={formVideoName}
+            className="mb-4"
+            placeholder="How I made an Operating System"
+            required
+          />
+          <Label htmlFor="description" className="font-bold text-xl">
+            Description
+          </Label>
+          <Textarea
+            ref={formVideoDesc}
+            id="description"
+            name="description"
+            rows={10}
+            className="resize-none"
+            placeholder="This is a video about when I made my first operating system"
+            required
+          />
+          <Button className="w-full mt-4">Continue</Button>
+        </form>
       </div>
     </>
   );
