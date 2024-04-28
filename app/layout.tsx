@@ -31,7 +31,7 @@ export default function RootLayout({
             </header>
             <main>{children}</main>
           </div>
-          <footer>
+          <footer className="h-40 flex items-center justify-center border-t border-slate-800 text-slate-200">
             <p>Copyright (C) Rdbo - 2024</p>
           </footer>
         </ThemeProvider>
