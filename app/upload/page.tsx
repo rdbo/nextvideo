@@ -5,7 +5,8 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 export default function UploadPage() {
-  const onDrop = useCallback((acceptedFiles: any) => {
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length == 0) return;
     console.log(acceptedFiles);
   }, []);
 
@@ -20,7 +21,7 @@ export default function UploadPage() {
       <div className="flex justify-center px-8">
         <div
           {...getRootProps()}
-          className="border border-slate-800 h-96 w-full rounded-lg flex justify-center items-center text-2xl text-center text-slate-400"
+          className="border-4 border-slate-800 border-dashed h-96 w-full rounded-lg flex justify-center items-center text-2xl text-center text-slate-400"
         >
           <input {...getInputProps()} />
           <Upload size={32} />
