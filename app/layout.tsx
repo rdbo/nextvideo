@@ -26,7 +26,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen">
-            <header className="sticky top-0 bg-slate-950 border-b border-slate-800">
+            <header className="sticky top-0 bg-slate-950 border-b border-slate-800 z-50">
               <NavBar />
             </header>
             <main>{children}</main>
