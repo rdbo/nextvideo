@@ -16,6 +16,7 @@ import {
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { AlertError } from "@/components/AlertError";
+import { useRouter } from "next/navigation";
 
 interface VideoInfo {
   title: string;
@@ -84,6 +85,7 @@ function UploadVideoFile() {
   const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps)
     .videoInfo as VideoInfo;
   const [errorMsg, setErrorMsg] = useState("");
+  const router = useRouter();
 
   const onDropAccepted = useCallback(
     (acceptedFiles: File[]) => {
@@ -118,6 +120,13 @@ function UploadVideoFile() {
           setErrorMsg("Bad response after uploading video to server");
           return;
         }
+
+        if (!resp.data.hasOwnProperty("video_url")) {
+          setErrorMsg("The server did not return a video URL");
+          return;
+        }
+
+        router.push(resp.data.video_url);
       };
       uploadVideo();
     },

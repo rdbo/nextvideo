@@ -1,11 +1,11 @@
-from flask import Flask, send_from_directory, send_file, request
+from flask import Flask, send_from_directory, send_file, request, jsonify
 
 app = Flask("nextvideo")
 
 @app.route("/api/upload", methods=["POST"])
 def api_upload():
     print(f"Uploading video: {request.form["title"]}")
-    return "OK"
+    return jsonify({ "video_url": "/" })
 
 @app.route("/")
 def index():
