@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { useDropzone } from "react-dropzone";
+import axios from "axios";
 
 interface VideoInfo {
   title: string;
@@ -82,21 +83,42 @@ function UploadVideoFile() {
   const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps).videoInfo as VideoInfo;
 
   const onDropAccepted = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
     setIsUploading(true);
+    let formData = new FormData();
+    formData.append("title", videoInfo.title);
+    formData.append("description", videoInfo.description);
+    formData.append("video", acceptedFiles[0]);
+    const uploadVideo = async () => {
+      const resp = await axios.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+
+        onUploadProgress: (event) => {
+          const progress = (event.loaded / (event.total as number)) * 100;
+          setUploadProgress(progress);
+        }
+      });
+      setIsUploading(false);
+      console.log(resp);
+    };
+    uploadVideo();
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDropAccepted,
     accept: { "video/*": [".mp4", ".avi", ".mpeg", ".mkv"] },
     disabled: isUploading,
+    maxFiles: 1,
   });
 
   return (
     <>
       <h1 className="text-2xl font-bold text-center my-4">Upload a Video</h1>
       <div className="px-8">
-        <p className="text-center text-xl"><span className="font-bold">Title:</span> {videoInfo.title}</p>
+        <p className="text-center text-xl">
+          <span className="font-bold">Title:</span> {videoInfo.title}
+        </p>
         <div
           {...getRootProps()}
           className="border-4 border-slate-800 border-dashed h-96 w-full rounded-lg flex justify-center items-center text-2xl text-center text-slate-400"
@@ -125,7 +147,10 @@ function UploadVideoFile() {
 }
 
 export default function UploadPage() {
-  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>({title: "Hello", description: "world"});
+  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>({
+    title: "Hello",
+    description: "world",
+  });
   return (
     <VideoInfoContext.Provider value={{ videoInfo, setVideoInfo }}>
       {videoInfo ? <UploadVideoFile /> : <VideoInformation />}
