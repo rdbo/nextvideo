@@ -30,6 +30,18 @@ def api_upload():
 
     return jsonify({ "video_url": f"/watch/{video_id}" })
 
+@app.route("/api/video/<video_id>")
+def api_video(video_id):
+    try:
+        id = uuid.UUID(video_id)
+    except:
+        return ("", 400)
+
+    video_file = app.config["VIDEOS_FOLDER"]
+    video_file = f"{video_file}/{id}/video"
+
+    return send_file(video_file)
+
 @app.route("/")
 def index():
     return send_file("out/index.html")
