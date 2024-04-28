@@ -169,10 +169,7 @@ function UploadVideoFile() {
 }
 
 export default function UploadPage() {
-  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>({
-    title: "Hello",
-    description: "world",
-  });
+  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   return (
     <VideoInfoContext.Provider value={{ videoInfo, setVideoInfo }}>
       {videoInfo ? <UploadVideoFile /> : <VideoInformation />}
