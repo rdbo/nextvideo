@@ -103,7 +103,7 @@ function UploadVideoFile() {
       console.log(resp);
     };
     uploadVideo();
-  }, []);
+  }, [videoInfo]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDropAccepted,
