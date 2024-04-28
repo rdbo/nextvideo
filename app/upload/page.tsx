@@ -9,7 +9,10 @@ export default function UploadPage() {
     console.log(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "video/*": [".mp4", ".avi", ".mpeg", ".mkv"] },
+  });
 
   return (
     <>
