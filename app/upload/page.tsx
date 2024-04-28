@@ -1,11 +1,51 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import { Upload } from "lucide-react";
-import { useCallback, useState } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function UploadPage() {
+interface VideoInfo {
+  name: string;
+  description: string;
+}
+
+interface VideoInfoContextProps {
+  videoInfo: VideoInfo | null;
+  setVideoInfo: React.Dispatch<React.SetStateAction<VideoInfo | null>>;
+}
+
+const VideoInfoContext = createContext<VideoInfoContextProps | null>(null);
+
+function VideoInformation() {
+  const { videoInfo, setVideoInfo } = useContext(VideoInfoContext) as VideoInfoContextProps;
+  const formVideoName = useRef(null);
+
+  const handleFormSubmit = (event: any) => {
+    event.preventDefault();
+  }
+
+  return (
+    <>
+      <h1 className="text-2xl font-bold text-center my-4">Video Information</h1>
+      <div className="flex flex-col items-center">
+      <form onSubmit={handleFormSubmit} className="w-96">
+        <Label htmlFor="name" className="font-bold text-xl">Title</Label>
+        <Input id="name" name="name" ref={formVideoName} className="mb-4" />
+        <Label htmlFor="description" className="font-bold text-xl">Description</Label>
+        <Textarea id="description" name="description" rows={10} className="resize-none" />
+        <Button className="w-full mt-4">Continue</Button>
+      </form>
+      </div>
+    </>
+  );
+}
+
+function UploadVideoFile() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -48,5 +88,14 @@ export default function UploadPage() {
         )}
       </div>
     </>
+  );
+}
+
+export default function UploadPage() {
+  const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
+  return (
+    <VideoInfoContext.Provider value={{ videoInfo, setVideoInfo }}>
+      {videoInfo ? <UploadVideoFile /> : <VideoInformation />}
+    </VideoInfoContext.Provider>
   );
 }
