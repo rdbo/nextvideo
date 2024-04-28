@@ -15,6 +15,7 @@ import {
 } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
+import { AlertError } from "@/components/AlertError";
 
 interface VideoInfo {
   title: string;
@@ -82,9 +83,11 @@ function UploadVideoFile() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const videoInfo = (useContext(VideoInfoContext) as VideoInfoContextProps)
     .videoInfo as VideoInfo;
+  const [errorMsg, setErrorMsg] = useState("");
 
   const onDropAccepted = useCallback(
     (acceptedFiles: File[]) => {
+      setErrorMsg("");
       setIsUploading(true);
       let formData = new FormData();
       formData.append("title", videoInfo.title);
@@ -105,13 +108,16 @@ function UploadVideoFile() {
           });
         } catch (error) {
           setIsUploading(false);
-          // TODO: Handle error!
-          alert("Failed to upload video, try again");
+          setErrorMsg("Failed to upload video");
           return;
         }
 
         setIsUploading(false);
-        alert("Video uploaded succesfully");
+
+        if (resp.status < 200 || resp.status > 299) {
+          setErrorMsg("Bad response after uploading video to server");
+          return;
+        }
       };
       uploadVideo();
     },
@@ -154,6 +160,9 @@ function UploadVideoFile() {
             </p>
           </div>
         )}
+      </div>
+      <div className="fixed bottom-0 px-8 pb-8 w-full">
+        {errorMsg && <AlertError onClick={() => setErrorMsg("")}>{errorMsg}</AlertError>}
       </div>
     </>
   );
