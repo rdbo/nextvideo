@@ -1,11 +1,34 @@
 from flask import Flask, send_from_directory, send_file, request, jsonify
+import os
+import uuid
+import json
 
 app = Flask("nextvideo")
+app.config["VIDEOS_FOLDER"] = "videos"
 
 @app.route("/api/upload", methods=["POST"])
 def api_upload():
+    if not "title" in request.form or not "description" in request.form or not "video" in request.files:
+        return ("", 400)
+
+    title = request.form["title"]
+    description = request.form["description"]
     print(f"Uploading video: {request.form["title"]}")
-    return jsonify({ "video_url": "/" })
+    video_file = request.files["video"]
+
+    video_id = uuid.uuid4()
+    print(f"Video ID: {video_id}")
+
+    video_dir = os.path.join(app.config["VIDEOS_FOLDER"], str(video_id))
+    os.mkdir(video_dir)
+    print(f"Upload directory: {video_dir}")
+
+    video_file.save(os.path.join(video_dir, "video"))
+    video_context = json.dumps({ "title": title, "description": description })
+    with open(os.path.join(video_dir, "context.json"), "w") as file:
+        file.write(video_context)
+
+    return jsonify({ "video_url": f"/watch/{video_id}" })
 
 @app.route("/")
 def index():
@@ -20,4 +43,6 @@ def assets(path):
     return send_from_directory("out/_next", path)
 
 if __name__ == "__main__":
+    if not os.path.exists(app.config["VIDEOS_FOLDER"]):
+        os.mkdir(app.config["VIDEOS_FOLDER"])
     app.run()
