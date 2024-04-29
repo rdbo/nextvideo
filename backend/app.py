@@ -30,8 +30,8 @@ def api_upload():
 
     return jsonify({ "video_url": f"/watch/{video_id}" })
 
-@app.route("/api/video/<video_id>")
-def api_video(video_id):
+@app.route("/api/watch/<video_id>")
+def api_watch(video_id):
     try:
         id = uuid.UUID(video_id)
     except:
@@ -41,6 +41,21 @@ def api_video(video_id):
     video_file = f"{video_file}/{id}/video"
 
     return send_file(video_file)
+
+@app.route("/api/video/<video_id>")
+def api_video(video_id):
+    try:
+        id = uuid.UUID(video_id)
+    except:
+        return ("", 400)
+
+    video_dir = app.config["VIDEOS_FOLDER"]
+    video_dir = f"{video_dir}/{id}"
+    video_context_file = open(f"{video_dir}/context.json", "r")
+    video_context = json.load(video_context_file)
+    video_context_file.close()
+    video_context["video_url"] = f"/api/watch/{id}"
+    return jsonify(video_context)
 
 @app.route("/")
 def index():
