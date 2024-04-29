@@ -15,7 +15,11 @@ export default function VideoSkeleton({ title, videoUrl, onClick }: Props) {
       }
       onClick={() => videoUrl && onClick(videoUrl)}
     >
-      <Skeleton className="h-40 w-full rounded-xl" />
+      {videoUrl ? (
+        <img src="/play.png" className="h-40" />
+      ) : (
+        <Skeleton className="h-40 w-full rounded-xl" />
+      )}
       <div className="space-y-2">
         {title ? (
           <h1 className="w-60">{title}</h1>
