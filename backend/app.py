@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory, send_file, request, jsonify
 import os
 import uuid
 import json
+import random
 
 app = Flask("nextvideo")
 app.config["VIDEOS_FOLDER"] = "videos"
@@ -56,6 +57,22 @@ def api_video(video_id):
     video_context_file.close()
     video_context["video_url"] = f"/api/watch/{id}"
     return jsonify(video_context)
+
+@app.route("/api/videos")
+def api_videos():
+    video_ids = os.listdir(app.config["VIDEOS_FOLDER"])
+    selected_videos = random.sample(video_ids, min(len(video_ids), 32))
+    videos = []
+    for video_id in selected_videos:
+        video_dir = app.config["VIDEOS_FOLDER"]
+        video_dir = f"{video_dir}/{video_id}"
+        video_context_file = open(f"{video_dir}/context.json", "r")
+        video_context = json.load(video_context_file)
+        video_context_file.close()
+        video_context["video_url"] = f"/api/watch/{video_id}"
+        videos.append(video_context)
+    return jsonify(videos)
+
 
 @app.route("/")
 def index():
