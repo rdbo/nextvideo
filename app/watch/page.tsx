@@ -20,6 +20,7 @@ export default function Watch() {
   useEffect(() => {
     if (!video_id) {
       router.push("/");
+      return;
     }
 
     axios

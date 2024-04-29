@@ -13,15 +13,21 @@ export default function NavBar() {
           </h1>
         </Link>
       </div>
-      <div className="absolute top-0 left-0 bottom-0 right-0 w-min mx-auto flex justify-center items-center h-14">
+      <form
+        method="GET"
+        action="/search"
+        className="absolute top-0 left-0 bottom-0 right-0 w-min mx-auto flex justify-center items-center h-14"
+      >
         <Input
           placeholder="Search for a video"
           className="w-96 rounded-l-full"
+          name="query"
+          required
         />
         <Button variant="outline" className="rounded-r-full border-l-0">
           <Search size={18} />
         </Button>
-      </div>
+      </form>
       <div>
         <Link href="/upload">
           <Button variant="outline" className="rounded-full">
