@@ -7,6 +7,14 @@ import random
 app = Flask("nextvideo")
 app.config["VIDEOS_FOLDER"] = "videos"
 
+def read_video_context(video_id):
+    video_dir = app.config["VIDEOS_FOLDER"]
+    video_dir = f"{video_dir}/{video_id}"
+    video_context_file = open(f"{video_dir}/context.json", "r")
+    video_context = json.load(video_context_file)
+    video_context_file.close() 
+    return video_context
+
 @app.route("/api/upload", methods=["POST"])
 def api_upload():
     if not "title" in request.form or not "description" in request.form or not "video" in request.files:
@@ -46,16 +54,12 @@ def api_watch(video_id):
 @app.route("/api/video/<video_id>")
 def api_video(video_id):
     try:
-        id = uuid.UUID(video_id)
+        video_id = uuid.UUID(video_id)
     except:
         return ("", 400)
 
-    video_dir = app.config["VIDEOS_FOLDER"]
-    video_dir = f"{video_dir}/{id}"
-    video_context_file = open(f"{video_dir}/context.json", "r")
-    video_context = json.load(video_context_file)
-    video_context_file.close()
-    video_context["video_url"] = f"/api/watch/{id}"
+    video_context = read_video_context(video_id)
+    video_context["video_url"] = f"/api/watch/{video_id}"
     return jsonify(video_context)
 
 @app.route("/api/videos")
@@ -64,14 +68,26 @@ def api_videos():
     selected_videos = random.sample(video_ids, min(len(video_ids), 32))
     videos = []
     for video_id in selected_videos:
-        video_dir = app.config["VIDEOS_FOLDER"]
-        video_dir = f"{video_dir}/{video_id}"
-        video_context_file = open(f"{video_dir}/context.json", "r")
-        video_context = json.load(video_context_file)
-        video_context_file.close()
+        video_context = read_video_context(video_id)
         video_context["video_url"] = f"/watch?id={video_id}"
         videos.append(video_context)
     return jsonify(videos)
+
+@app.route("/api/search")
+def api_search():
+    if not "query" in request.args:
+        return ("", 400)
+
+    keywords = request.args["query"].split(" ")
+    matches = []
+
+    for video_id in os.listdir(app.config["VIDEOS_FOLDER"]):
+        ctx = read_video_context(video_id)
+        for keyword in keywords:
+            if ctx["title"].find(keyword) >= 0 or ctx["description"].find(keyword) >= 0:
+               matches.append(video_id)
+
+    return jsonify(matches)
 
 
 @app.route("/")
