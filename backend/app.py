@@ -85,10 +85,10 @@ def api_search():
         ctx = read_video_context(video_id)
         for keyword in keywords:
             if ctx["title"].find(keyword) >= 0 or ctx["description"].find(keyword) >= 0:
-               matches.append(video_id)
+                ctx["video_url"] = f"/watch?id={video_id}"
+                matches.append(ctx)
 
     return jsonify(matches)
-
 
 @app.route("/")
 def index():
