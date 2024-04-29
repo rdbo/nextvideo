@@ -28,7 +28,7 @@ def api_upload():
     with open(os.path.join(video_dir, "context.json"), "w") as file:
         file.write(video_context)
 
-    return jsonify({ "video_url": f"/watch/{video_id}" })
+    return jsonify({ "video_url": f"/watch?id={video_id}" })
 
 @app.route("/api/watch/<video_id>")
 def api_watch(video_id):
