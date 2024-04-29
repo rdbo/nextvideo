@@ -69,7 +69,7 @@ def api_videos():
         video_context_file = open(f"{video_dir}/context.json", "r")
         video_context = json.load(video_context_file)
         video_context_file.close()
-        video_context["video_url"] = f"/api/watch/{video_id}"
+        video_context["video_url"] = f"/watch?id={video_id}"
         videos.append(video_context)
     return jsonify(videos)
 
