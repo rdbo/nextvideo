@@ -38,7 +38,7 @@ export default function Home() {
       <div className="pl-4">
         <h1 className="text-2xl font-bold my-4 text-center">Random Videos</h1>
         <div className="w-full flex flex-wrap justify-center">
-          {videos
+          {videos.length > 0
             ? videos.map((video, i) => (
                 <div key={i} className="mr-4 mb-8">
                   <VideoSkeleton
